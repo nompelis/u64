@@ -7,7 +7,7 @@ libu64 \- A key-value database library with 64-bit keys.
 .nf
 #include "u64.h"
 
-void init_database(Database *db);
+void init_database(Database *db, int limit);
 void setlimit_db(Database *db, int limit);
 int getlimit_db(Database *db);
 int getsize_db(Database *db);
@@ -29,7 +29,7 @@ void update_record(
 void delete_record(
 	Database *db, 
 	unsigned long key);
-const unsigned char *read_by_index_record(
+const unsigned char *read_record_by_index(
 	Database *db, 
 	int index,
 	size_t *value_size);
@@ -107,7 +107,7 @@ key is not found, the function will print an error message.
 Deletes the record associated with the specified key from the database. If
 the key is not found, the function will print an error message.
 
-.SS "const unsigned char *read_by_index_record(Database *db, int index, size_t *value_size)"
+.SS "const unsigned char *read_record_by_index(Database *db, int index, size_t *value_size)"
 .br
 Reads the value at the specified index from the database. If the index is
 valid, the function returns a pointer to the value and sets \fIvalue_size\fP

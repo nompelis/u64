@@ -47,7 +47,7 @@ Images are not covered by this license.
 
 ### 4.1 DB Initialisation
 
-Function `init_db`
+Function `init_database`
 
 **Description**: Initializes the database by setting the size to 0 and the limit to the provided value.
 
@@ -172,11 +172,11 @@ Function `delete`
 
 ### 6.5 Read index record
 
-Function `read_by_index_record`
+Function `read_record_by_index`
 
 **Description**: Reads a record from the database by its index position.
 
-**Prototype**: `const unsigned char* read_by_index_record(Database* db, int index, size_t* value_size);`
+**Prototype**: `const unsigned char* read_record_by_index(Database* db, int index, size_t* value_size);`
 
 **Parameters**:
 - `db`: A pointer to the `Database` structure.

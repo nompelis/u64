@@ -11,14 +11,14 @@
 #include <string.h>
 #include "db.h"
 
-void init_db(Database* db, int limit) {
+void init_database(Database* db, int limit) {
     db->size = 0;
     db->limit = (size_t) limit;
     db->keys = (unsigned long *)malloc(sizeof(unsigned long)*db->limit);
     db->values = (unsigned char **)malloc(sizeof(unsigned char *)*db->limit);
     db->value_sizes = (size_t *)malloc(sizeof(size_t)*db->limit);
     if(db->keys == NULL || db->values == NULL || db->value_sizes == NULL) {
-        fprintf(stderr, "ERROR init_db: Can not allocate memory");
+        fprintf(stderr, "ERROR init_database: Can not allocate memory");
         exit(-1);
     }
 }
@@ -45,4 +45,3 @@ int binary_search_db(Database* db, unsigned long key) {
     }
     return low;
 }
-
