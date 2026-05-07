@@ -13,10 +13,10 @@
 #include <stdint.h>
 #include "db.h"
 
-void create_record(Database* db, uint64_t key, const unsigned char* value, size_t value_size);
+int create_record(Database* db, uint64_t key, const unsigned char* value, size_t value_size);
 const unsigned char* read_record(Database* db, uint64_t key, size_t* value_size);
-void update_record(Database* db, uint64_t key, const unsigned char* value, size_t value_size);
-void delete_record(Database* db, uint64_t key);
+int update_record(Database* db, uint64_t key, const unsigned char* value, size_t value_size);
+int delete_record(Database* db, uint64_t key);
 const unsigned char* read_record_by_index(Database* db, int index, size_t* value_size);
 
 #endif 

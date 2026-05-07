@@ -8,11 +8,11 @@ libu64 \- A key-value database library with 64-bit keys.
 #include "u64.h"
 #include <stdint.h>
 
-void init_database(Database *db);
+int init_database(Database *db);
 int getlimit_db(Database *db);
 int getsize_db(Database *db);
 
-void create_record(
+int create_record(
 	Database *db, 
 	uint64_t key,
 	const unsigned char *value,
@@ -21,12 +21,12 @@ const unsigned char *read_record(
 	Database *db, 
 	uint64_t key,
 	size_t *value_size);
-void update_record(
+int update_record(
 	Database *db, 
 	uint64_t key,
 	const unsigned char *value,
 	size_t value_size);
-void delete_record(
+int delete_record(
 	Database *db, 
 	uint64_t key);
 const unsigned char *read_record_by_index(
@@ -72,9 +72,10 @@ characteristics:
 
 .SH DATABASE RELATED FUNCTIONS
 
-.SS "void init_database(Database *db)"
+.SS "int init_database(Database *db)"
 Initializes the database structure. This function sets the initial size of
-the database to 0 and the initial capacity to 32 records.
+the database to 0 and the initial capacity to 32 records. The function
+returns \fB0\fP on success and \fB-1\fP on failure.
 
 .SS "int getlimit_db(Database *db)"
 Returns the current capacity of the database. The capacity starts at 32
@@ -85,12 +86,12 @@ Returns the current number of records in the database.
 
 .SH RECORD RELATED FUNCTIONS
 
-.SS "void create_record(Database *db, uint64_t key, const unsigned char *value, size_t value_size)"
+.SS "int create_record(Database *db, uint64_t key, const unsigned char *value, size_t value_size)"
 .br
 Creates a new record in the database with the specified key and value. If the
-key already exists, the function will print an error message. If the current
-capacity is full, the database attempts to grow before inserting. If growth
-fails, the function will print an error message.
+current capacity is full, the database attempts to grow before inserting. The
+function returns \fB0\fP on success and \fB-1\fP if the key already exists,
+growth fails, or value allocation fails.
 
 .SS "const unsigned char *read_record(Database *db, uint64_t key, size_t *value_size)"
 .br
@@ -99,15 +100,16 @@ key is found, the function returns a pointer to the value and sets
 \fIvalue_size\fP to the size of the value. If the key is not found, the
 function returns \fBNULL\fP.
 
-.SS "void update_record(Database *db, uint64_t key, const unsigned char *value, size_t value_size)"
+.SS "int update_record(Database *db, uint64_t key, const unsigned char *value, size_t value_size)"
 .br
-Updates the value associated with the specified key in the database. If the
-key is not found, the function will print an error message.
+Updates the value associated with the specified key in the database. The
+function returns \fB0\fP on success and \fB-1\fP if the key is not found or
+value allocation fails.
 
-.SS "void delete_record(Database *db, uint64_t key)"
+.SS "int delete_record(Database *db, uint64_t key)"
 .br
-Deletes the record associated with the specified key from the database. If
-the key is not found, the function will print an error message.
+Deletes the record associated with the specified key from the database. The
+function returns \fB0\fP on success and \fB-1\fP if the key is not found.
 
 .SS "const unsigned char *read_record_by_index(Database *db, int index, size_t *value_size)"
 .br
@@ -155,9 +157,13 @@ int main() {
     size_t i;
     const unsigned char *read_value;
 
-    init_database(&db);
+    if (init_database(&db) != 0) {
+        return 1;
+    }
 
-    create_record(&db, 100, value100, sizeof(value100));
+    if (create_record(&db, 100, value100, sizeof(value100)) != 0) {
+        return 1;
+    }
 
     read_value = read_record(&db, 100, &size);
     if (read_value) {
@@ -168,7 +174,9 @@ int main() {
         printf("\n");
     }
 
-    write_db(&db, "database.dat");
+    if (write_db(&db, "database.dat") != 0) {
+        return 1;
+    }
     return 0;
 }
 .fi

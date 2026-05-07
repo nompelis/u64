@@ -11,23 +11,28 @@
 #include <string.h>
 #include "db.h"
 
-void create_record(Database* db, uint64_t key, const unsigned char* value, size_t value_size) {
+int create_record(Database* db, uint64_t key, const unsigned char* value, size_t value_size) {
 
     int i;
+    unsigned char* stored_value;
 
     if (db->size >= db->limit) {
         if (grow_db(db) != 0) {
-            printf("Database can not grow\n");
-            return;
+            return U64_ERROR;
         }
     }
 
     int index = binary_search_db(db, key);
 
     if (index < db->size && db->keys[index] == key) {
-        printf("Key already exists\n");
-        return;
+        return U64_ERROR;
     }
+
+    stored_value = (unsigned char*)malloc(value_size);
+    if (stored_value == NULL) {
+        return U64_ERROR;
+    }
+    memcpy(stored_value, value, value_size);
 
     for (i = db->size; i > index; --i) {
         db->keys[i] = db->keys[i - 1];
@@ -36,10 +41,10 @@ void create_record(Database* db, uint64_t key, const unsigned char* value, size_
     }
 
     db->keys[index] = key;
-    db->values[index] = (unsigned char*)malloc(value_size);
-    memcpy(db->values[index], value, value_size);
+    db->values[index] = stored_value;
     db->value_sizes[index] = value_size;
     db->size++;
+    return U64_OK;
 }
 
 const unsigned char* read_record(Database* db, uint64_t key, size_t* value_size) {
@@ -51,19 +56,26 @@ const unsigned char* read_record(Database* db, uint64_t key, size_t* value_size)
     return NULL;
 }
 
-void update_record(Database* db, uint64_t key, const unsigned char* value, size_t value_size) {
+int update_record(Database* db, uint64_t key, const unsigned char* value, size_t value_size) {
     int index = binary_search_db(db, key);
+    unsigned char* stored_value;
+
     if (index < db->size && db->keys[index] == key) {
+        stored_value = (unsigned char*)malloc(value_size);
+        if (stored_value == NULL) {
+            return U64_ERROR;
+        }
+        memcpy(stored_value, value, value_size);
         free(db->values[index]);  /* Free the old value memory */
-        db->values[index] = (unsigned char*)malloc(value_size);
-        memcpy(db->values[index], value, value_size);
+        db->values[index] = stored_value;
         db->value_sizes[index] = value_size;
+        return U64_OK;
     } else {
-        printf("Key not found\n");
+        return U64_ERROR;
     }
 }
 
-void delete_record(Database* db, uint64_t key) {
+int delete_record(Database* db, uint64_t key) {
     int i;
     int index = binary_search_db(db, key);
     if (index < db->size && db->keys[index] == key) {
@@ -74,8 +86,9 @@ void delete_record(Database* db, uint64_t key) {
             db->value_sizes[i] = db->value_sizes[i + 1];
         }
         db->size--;
+        return U64_OK;
     } else {
-        printf("Key not found\n");
+        return U64_ERROR;
     }
 }
 

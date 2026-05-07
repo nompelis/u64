@@ -53,10 +53,12 @@ Function `init_database`
 
 **Description**: Initializes the database by setting the size to 0 and the initial capacity to 32 records.
 
-**Prototype**: `void init_database(Database* db);`
+**Prototype**: `int init_database(Database* db);`
 
 **Parameters**:
 - `db`: A pointer to the `Database` structure to initialize.
+
+**Returns**: `0` on success, `-1` on failure.
 
 ### 4.2 Get limit
 
@@ -122,13 +124,15 @@ Function `create_record`
 
 **Description**: Creates a new record in the database with the specified key and value.
 
-**Prototype**: `void create_record(Database* db, uint64_t key, const unsigned char* value, size_t value_size);`
+**Prototype**: `int create_record(Database* db, uint64_t key, const unsigned char* value, size_t value_size);`
 
 **Parameters**:
 - `db`: A pointer to the `Database` structure.
 - `key`: The key for the new record.
 - `value`: A pointer to the value to be stored.
 - `value_size`: The size of the value in bytes.
+
+**Returns**: `0` on success, `-1` on failure.
 
 ### 6.2 Read a record
 
@@ -151,7 +155,7 @@ Function `update_record`
 
 **Description**: Updates an existing record in the database with a new value.
 
-**Prototype**: `void update_record(Database* db, uint64_t key, const unsigned char* value, size_t value_size);`
+**Prototype**: `int update_record(Database* db, uint64_t key, const unsigned char* value, size_t value_size);`
 
 **Parameters**:
 - `db`: A pointer to the `Database` structure.
@@ -159,17 +163,21 @@ Function `update_record`
 - `value`: A pointer to the new value to be stored.
 - `value_size`: The size of the new value in bytes.
 
+**Returns**: `0` on success, `-1` on failure.
+
 ### 6.4 Delete a record
 
 Function `delete`
 
 **Description**: Deletes a record from the database by its key.
 
-**Prototype**: `void delete_record(Database* db, uint64_t key);`
+**Prototype**: `int delete_record(Database* db, uint64_t key);`
 
 **Parameters**:
 - `db`: A pointer to the `Database` structure.
 - `key`: The key of the record to delete.
+
+**Returns**: `0` on success, `-1` on failure.
 
 ### 6.5 Read index record
 

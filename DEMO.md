@@ -18,4 +18,4 @@ What it tests:
 
 - **Persistence:** Writes the current database to `database.dat`, creates a second database, loads `database.dat` into it, and prints the loaded size.
 
-It is not a formal test suite: it does not assert expected values or return failure on mismatches. It verifies behavior by exercising the API and printing the observed results.
+It is not a formal test suite: it does not assert every expected byte value. It verifies behavior by exercising the API, printing the observed results, and returning a nonzero status if initialization, mutation, read, write, or load operations fail.

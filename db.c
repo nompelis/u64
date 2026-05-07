@@ -11,16 +11,24 @@
 #include <string.h>
 #include "db.h"
 
-void init_database(Database* db) {
+int init_database(Database* db) {
     db->size = 0;
     db->limit = U64_INITIAL_CAPACITY;
     db->keys = (uint64_t *)malloc(sizeof(uint64_t)*db->limit);
     db->values = (unsigned char **)malloc(sizeof(unsigned char *)*db->limit);
     db->value_sizes = (size_t *)malloc(sizeof(size_t)*db->limit);
     if(db->keys == NULL || db->values == NULL || db->value_sizes == NULL) {
-        fprintf(stderr, "ERROR init_database: Can not allocate memory");
-        exit(-1);
+        free(db->keys);
+        free(db->values);
+        free(db->value_sizes);
+        db->keys = NULL;
+        db->values = NULL;
+        db->value_sizes = NULL;
+        db->size = 0;
+        db->limit = 0;
+        return U64_ERROR;
     }
+    return U64_OK;
 }
 
 int getlimit_db(Database* db) {
@@ -44,24 +52,24 @@ int grow_db(Database* db) {
 
     new_keys = (uint64_t *)realloc(db->keys, sizeof(uint64_t)*new_limit);
     if (new_keys == NULL) {
-        return -1;
+        return U64_ERROR;
     }
     db->keys = new_keys;
 
     new_values = (unsigned char **)realloc(db->values, sizeof(unsigned char *)*new_limit);
     if (new_values == NULL) {
-        return -1;
+        return U64_ERROR;
     }
     db->values = new_values;
 
     new_value_sizes = (size_t *)realloc(db->value_sizes, sizeof(size_t)*new_limit);
     if (new_value_sizes == NULL) {
-        return -1;
+        return U64_ERROR;
     }
     db->value_sizes = new_value_sizes;
     db->limit = new_limit;
 
-    return 0;
+    return U64_OK;
 }
 
 int binary_search_db(Database* db, uint64_t key) {

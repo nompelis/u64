@@ -135,111 +135,129 @@ static int read_header(FILE* file) {
     return 0;
 }
 
+static void clear_loaded_values(Database* db, int count) {
+    int i;
+
+    for (i = 0; i < count; ++i) {
+        free(db->values[i]);
+        db->values[i] = NULL;
+        db->value_sizes[i] = 0;
+    }
+    db->size = 0;
+}
+
 int read_db(Database* db, const char* filename) {
     int i;
+    int loaded_values;
     uint32_t size;
     uint64_t value_size;
     FILE* file = fopen(filename, "rb");
     if (!file) {
-        return -1;
+        return U64_ERROR;
     }
 
     if (read_header(file) != 0) {
         fclose(file);
-        return -1;
+        return U64_ERROR;
     }
     if (read_uint32_big_endian(file, &size) != 0) {
         fclose(file);
-        return -1;
+        return U64_ERROR;
     }
     if (size > INT_MAX) {
         fclose(file);
-        return -1;
+        return U64_ERROR;
     }
     while (db->limit < (int)size) {
         if (grow_db(db) != 0) {
             fclose(file);
-            return -1;
+            return U64_ERROR;
         }
     }
-    db->size = (int)size;
-    for (i = 0; i < db->size; ++i) {
+    db->size = 0;
+    for (i = 0; i < (int)size; ++i) {
         if (read_uint64_big_endian(file, &db->keys[i]) != 0) {
             fclose(file);
-            return -1;
+            return U64_ERROR;
         }
     }
-    for (i = 0; i < db->size; ++i) {
+    for (i = 0; i < (int)size; ++i) {
         if (read_uint64_big_endian(file, &value_size) != 0) {
             fclose(file);
-            return -1;
+            return U64_ERROR;
         }
         if ((uint64_t)((size_t)value_size) != value_size) {
             fclose(file);
-            return -1;
+            return U64_ERROR;
         }
         db->value_sizes[i] = (size_t)value_size;
     }
 
-    for (i = 0; i < db->size; ++i) {
+    loaded_values = 0;
+    for (i = 0; i < (int)size; ++i) {
         db->values[i] = (unsigned char*)malloc(db->value_sizes[i]);
         if (db->values[i] == NULL) {
+            clear_loaded_values(db, loaded_values);
             fclose(file);
-            return -1;
+            return U64_ERROR;
         }
         if (fread(db->values[i], sizeof(unsigned char), db->value_sizes[i], file) != db->value_sizes[i]) {
+            loaded_values++;
+            clear_loaded_values(db, loaded_values);
             fclose(file);
-            return -1;
+            return U64_ERROR;
         }
+        loaded_values++;
     }
 
+    db->size = (int)size;
     fclose(file);
-    return 0;
+    return U64_OK;
 }
 
 int write_db(Database* db, const char* filename) {
     int i;
     FILE* file = fopen(filename, "wb");
     if (!file) {
-        return -1;
+        return U64_ERROR;
     }
 
     if (db->size < 0) {
         fclose(file);
-        return -1;
+        return U64_ERROR;
     }
     if (write_header(file) != 0) {
         fclose(file);
-        return -1;
+        return U64_ERROR;
     }
     if (write_uint32_big_endian(file, (uint32_t)db->size) != 0) {
         fclose(file);
-        return -1;
+        return U64_ERROR;
     }
     for (i = 0; i < db->size; ++i) {
         if (write_uint64_big_endian(file, db->keys[i]) != 0) {
             fclose(file);
-            return -1;
+            return U64_ERROR;
         }
     }
     for (i = 0; i < db->size; ++i) {
         if ((size_t)((uint64_t)db->value_sizes[i]) != db->value_sizes[i]) {
             fclose(file);
-            return -1;
+            return U64_ERROR;
         }
         if (write_uint64_big_endian(file, (uint64_t)db->value_sizes[i]) != 0) {
             fclose(file);
-            return -1;
+            return U64_ERROR;
         }
     }
 
     for (i = 0; i < db->size; ++i) {
         if (fwrite(db->values[i], sizeof(unsigned char), db->value_sizes[i], file) != db->value_sizes[i]) {
             fclose(file);
-            return -1;
+            return U64_ERROR;
         }
     }
 
     fclose(file);
-    return 0;
+    return U64_OK;
 }
