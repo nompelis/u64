@@ -19,9 +19,12 @@ typedef struct {
     int limit;
 } Database;
 
-void init_database(Database* db, int limit);
+#define U64_INITIAL_CAPACITY 32
+
+void init_database(Database* db);
 int getlimit_db(Database* db);
 int getsize_db(Database* db);
 int binary_search_db(Database* db, unsigned long key);
+int grow_db(Database* db);
 
 #endif 

@@ -7,8 +7,7 @@ libu64 \- A key-value database library with 64-bit keys.
 .nf
 #include "u64.h"
 
-void init_database(Database *db, int limit);
-void setlimit_db(Database *db, int limit);
+void init_database(Database *db);
 int getlimit_db(Database *db);
 int getsize_db(Database *db);
 
@@ -72,12 +71,13 @@ characteristics:
 
 .SH DATABASE RELATED FUNCTIONS
 
-.SS "void init_database(Database *db, init limit)"
+.SS "void init_database(Database *db)"
 Initializes the database structure. This function sets the initial size of
-the database with the provided limit.
+the database to 0 and the initial capacity to 32 records.
 
 .SS "int getlimit_db(Database *db)"
-Returns the current limit on the number of records in the database.
+Returns the current capacity of the database. The capacity starts at 32
+records and doubles when full.
 
 .SS "int getsize_db(Database *db)"
 Returns the current number of records in the database.

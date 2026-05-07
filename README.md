@@ -49,26 +49,25 @@ Images are not covered by this license.
 
 Function `init_database`
 
-**Description**: Initializes the database by setting the size to 0 and the limit to the provided value.
+**Description**: Initializes the database by setting the size to 0 and the initial capacity to 32 records.
 
-**Prototype**: `void init_database(Database* db, int limit);`
+**Prototype**: `void init_database(Database* db);`
 
 **Parameters**:
 - `db`: A pointer to the `Database` structure to initialize.
-- `limit`: An int specifying the preallocated space in the Database to store items.
 
 ### 4.2 Get limit
 
 Function `getlimit_db`
 
-**Description**: Retrieves the current limit of the database.
+**Description**: Retrieves the current capacity of the database. The capacity starts at 32 records and doubles when full.
 
 **Prototype**: `int getlimit_db(Database* db);`
 
 **Parameters**:
 - `db`: A pointer to the `Database` structure.
 
-**Returns**: The current limit of the database.
+**Returns**: The current capacity of the database.
 
 ### 4.3 Get number of items in the database
 

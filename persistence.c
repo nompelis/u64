@@ -13,12 +13,20 @@
 
 int read_db(Database* db, const char* filename) {
     int i;
+    int size;
     FILE* file = fopen(filename, "rb");
     if (!file) {
         return -1;
     }
 
-    fread(&db->size, sizeof(int), 1, file);
+    fread(&size, sizeof(int), 1, file);
+    while (db->limit < size) {
+        if (grow_db(db) != 0) {
+            fclose(file);
+            return -1;
+        }
+    }
+    db->size = size;
     fread(db->keys, sizeof(unsigned long), db->size, file);
     fread(db->value_sizes, sizeof(size_t), db->size, file);
 

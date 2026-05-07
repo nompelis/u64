@@ -16,7 +16,7 @@ int main() {
     size_t i;
     
     Database *db = (Database *)malloc(sizeof(Database));
-    init_database(db, 1000000);
+    init_database(db);
     
     printf("Size before creating item 100: %d\n", getsize_db(db));
 
@@ -68,7 +68,7 @@ int main() {
     write_db(db, "database.dat");
 
     Database* db2 = (Database *)malloc( sizeof(Database) );
-    init_database(db2, 1000000);
+    init_database(db2);
     read_db(db2, "database.dat");
 
     printf("Size of db2 after reading from file: %d\n", getsize_db(db2));

@@ -16,8 +16,10 @@ void create_record(Database* db, unsigned long key, const unsigned char* value, 
     int i;
 
     if (db->size >= db->limit) {
-        printf("Database is full\n");
-        return;
+        if (grow_db(db) != 0) {
+            printf("Database can not grow\n");
+            return;
+        }
     }
 
     int index = binary_search_db(db, key);
