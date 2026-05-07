@@ -6,6 +6,7 @@ libu64 \- A key-value database library with 64-bit keys.
 .SH SYNOPSIS
 .nf
 #include "u64.h"
+#include <stdint.h>
 
 void init_database(Database *db);
 int getlimit_db(Database *db);
@@ -13,21 +14,21 @@ int getsize_db(Database *db);
 
 void create_record(
 	Database *db, 
-	unsigned long key, 
+	uint64_t key,
 	const unsigned char *value,
 	size_t value_size);
 const unsigned char *read_record(
 	Database *db, 
-	unsigned long key,
+	uint64_t key,
 	size_t *value_size);
 void update_record(
 	Database *db, 
-	unsigned long key, 
+	uint64_t key,
 	const unsigned char *value,
 	size_t value_size);
 void delete_record(
 	Database *db, 
-	unsigned long key);
+	uint64_t key);
 const unsigned char *read_record_by_index(
 	Database *db, 
 	int index,
@@ -41,7 +42,7 @@ int write_db(Database *db, const char *filename);
 The \fBlibu64\fP library is a key-value database library with the following
 characteristics:
 
-\- Written in strict ANSI C89 (highly portable).
+\- Written in ISO C99.
 .br
 \- No dependencies on external libraries.
 .br
@@ -51,7 +52,7 @@ characteristics:
 .br
 \- Fast and performant through sorted storage of database items.
 .br
-\- Keys are unsigned long 64 bits.
+\- Keys are unsigned 64-bit integers.
 .br
 \- Values are arbitrary length of bytes.
 .br
@@ -84,25 +85,25 @@ Returns the current number of records in the database.
 
 .SH RECORD RELATED FUNCTIONS
 
-.SS "void create_record(Database *db, unsigned long key, const unsigned char *value, size_t value_size)"
+.SS "void create_record(Database *db, uint64_t key, const unsigned char *value, size_t value_size)"
 .br
 Creates a new record in the database with the specified key and value. If the
 key already exists, the function will print an error message. If the database
 is full, the function will also print an error message.
 
-.SS "const unsigned char *read_record(Database *db, unsigned long key, size_t *value_size)"
+.SS "const unsigned char *read_record(Database *db, uint64_t key, size_t *value_size)"
 .br
 Reads the value associated with the specified key from the database. If the
 key is found, the function returns a pointer to the value and sets
 \fIvalue_size\fP to the size of the value. If the key is not found, the
 function returns \fBNULL\fP.
 
-.SS "void update_record(Database *db, unsigned long key, const unsigned char *value, size_t value_size)"
+.SS "void update_record(Database *db, uint64_t key, const unsigned char *value, size_t value_size)"
 .br
 Updates the value associated with the specified key in the database. If the
 key is not found, the function will print an error message.
 
-.SS "void delete_record(Database *db, unsigned long key)"
+.SS "void delete_record(Database *db, uint64_t key)"
 .br
 Deletes the record associated with the specified key from the database. If
 the key is not found, the function will print an error message.

@@ -14,7 +14,7 @@
 void init_database(Database* db) {
     db->size = 0;
     db->limit = U64_INITIAL_CAPACITY;
-    db->keys = (unsigned long *)malloc(sizeof(unsigned long)*db->limit);
+    db->keys = (uint64_t *)malloc(sizeof(uint64_t)*db->limit);
     db->values = (unsigned char **)malloc(sizeof(unsigned char *)*db->limit);
     db->value_sizes = (size_t *)malloc(sizeof(size_t)*db->limit);
     if(db->keys == NULL || db->values == NULL || db->value_sizes == NULL) {
@@ -33,7 +33,7 @@ int getsize_db(Database* db) {
 
 int grow_db(Database* db) {
     int new_limit;
-    unsigned long *new_keys;
+    uint64_t *new_keys;
     unsigned char **new_values;
     size_t *new_value_sizes;
 
@@ -42,7 +42,7 @@ int grow_db(Database* db) {
         new_limit = U64_INITIAL_CAPACITY;
     }
 
-    new_keys = (unsigned long *)realloc(db->keys, sizeof(unsigned long)*new_limit);
+    new_keys = (uint64_t *)realloc(db->keys, sizeof(uint64_t)*new_limit);
     if (new_keys == NULL) {
         return -1;
     }
@@ -64,7 +64,7 @@ int grow_db(Database* db) {
     return 0;
 }
 
-int binary_search_db(Database* db, unsigned long key) {
+int binary_search_db(Database* db, uint64_t key) {
     int low = 0, high = db->size - 1;
     while (low <= high) {
         int mid = (low + high) / 2;

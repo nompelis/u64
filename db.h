@@ -10,9 +10,10 @@
 #define _U64_DATABASE_H
 
 #include <stddef.h>
+#include <stdint.h>
 
 typedef struct {
-    unsigned long *keys;
+    uint64_t *keys;
     unsigned char **values;
     size_t *value_sizes;
     int size;
@@ -24,7 +25,7 @@ typedef struct {
 void init_database(Database* db);
 int getlimit_db(Database* db);
 int getsize_db(Database* db);
-int binary_search_db(Database* db, unsigned long key);
+int binary_search_db(Database* db, uint64_t key);
 int grow_db(Database* db);
 
 #endif 

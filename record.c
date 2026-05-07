@@ -11,7 +11,7 @@
 #include <string.h>
 #include "db.h"
 
-void create_record(Database* db, unsigned long key, const unsigned char* value, size_t value_size) {
+void create_record(Database* db, uint64_t key, const unsigned char* value, size_t value_size) {
 
     int i;
 
@@ -42,7 +42,7 @@ void create_record(Database* db, unsigned long key, const unsigned char* value, 
     db->size++;
 }
 
-const unsigned char* read_record(Database* db, unsigned long key, size_t* value_size) {
+const unsigned char* read_record(Database* db, uint64_t key, size_t* value_size) {
     int index = binary_search_db(db, key);
     if (index < db->size && db->keys[index] == key) {
         *value_size = db->value_sizes[index];
@@ -51,7 +51,7 @@ const unsigned char* read_record(Database* db, unsigned long key, size_t* value_
     return NULL;
 }
 
-void update_record(Database* db, unsigned long key, const unsigned char* value, size_t value_size) {
+void update_record(Database* db, uint64_t key, const unsigned char* value, size_t value_size) {
     int index = binary_search_db(db, key);
     if (index < db->size && db->keys[index] == key) {
         free(db->values[index]);  /* Free the old value memory */
@@ -63,7 +63,7 @@ void update_record(Database* db, unsigned long key, const unsigned char* value, 
     }
 }
 
-void delete_record(Database* db, unsigned long key) {
+void delete_record(Database* db, uint64_t key) {
     int i;
     int index = binary_search_db(db, key);
     if (index < db->size && db->keys[index] == key) {

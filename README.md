@@ -4,15 +4,15 @@
 
 ## 1. Description
 
-u64 is a key value database library with the following characteristics. It is named after the type used 
-for the keys (unsigned long 64 bits).
+u64 is a key value database library with the following characteristics. It is named after the type used
+for the keys (unsigned 64-bit integers).
 
-- Written in strict ANSI C89 (highly portable).
+- Written in ISO C99.
 - No dependencies on external libraries.
 - Single threaded (intended to be embeddable with another processes).
 - Simple and lightweight.
 - Fast and performant through sorted storage of database items.
-- Keys are unsigned long 64 bits.
+- Keys are unsigned 64-bit integers.
 - Values are arbitrary length of bytes.
 - Commands and outputs via stdin and stdout (intended to be used as embedded 
   database in systems).
@@ -120,7 +120,7 @@ Function `create_record`
 
 **Description**: Creates a new record in the database with the specified key and value.
 
-**Prototype**: `void create_record(Database* db, unsigned long key, const unsigned char* value, size_t value_size);`
+**Prototype**: `void create_record(Database* db, uint64_t key, const unsigned char* value, size_t value_size);`
 
 **Parameters**:
 - `db`: A pointer to the `Database` structure.
@@ -134,7 +134,7 @@ Function `read_record`
 
 **Description**: Reads a record from the database by its key.
 
-**Prototype**: `const unsigned char* read_record(Database* db, unsigned long key, size_t* value_size);`
+**Prototype**: `const unsigned char* read_record(Database* db, uint64_t key, size_t* value_size);`
 
 **Parameters**:
 - `db`: A pointer to the `Database` structure.
@@ -149,7 +149,7 @@ Function `update_record`
 
 **Description**: Updates an existing record in the database with a new value.
 
-**Prototype**: `void update_record(Database* db, unsigned long key, const unsigned char* value, size_t value_size);`
+**Prototype**: `void update_record(Database* db, uint64_t key, const unsigned char* value, size_t value_size);`
 
 **Parameters**:
 - `db`: A pointer to the `Database` structure.
@@ -163,7 +163,7 @@ Function `delete`
 
 **Description**: Deletes a record from the database by its key.
 
-**Prototype**: `void delete_record(Database* db, unsigned long key);`
+**Prototype**: `void delete_record(Database* db, uint64_t key);`
 
 **Parameters**:
 - `db`: A pointer to the `Database` structure.
@@ -192,20 +192,15 @@ Function `read_record_by_index`
 
 `make man` will install the man page `libu64` in section 3.
 
-## 8. Caveats: unsigned long and endianness
+## 8. Caveats: endianness
 
-As the library is written in ANSI C89, it is not enforced that unsigned long (the type used for keys) will be 64 bits.
-However, in almost every modern system (even in 20 years old 32 bit systems) this will be the case. This is also applicable to many modern embedded systems.
-
-For certain special embedded systems unsigned long might be 32 bits, in that case the database will be 32 bits based.
-
-The system does not guarantee portability across systems or compilers for persistence since the persistence is implemented as a memory dump of the database struct.
+The system does not guarantee portability across systems or compilers for persistence since the persistence format still writes native integer and size fields.
 
 These limitations are likely not relevant but need to be taken into consideration.
 
 ## 9. About the name / Trivia
 
-The database is named after the fact that it uses 64 bits unsigned long as keys.
+The database is named after the fact that it uses unsigned 64-bit integers as keys.
 
 The U-64 was also a Kriegsmarine U-Boat sunk during the invasion of Denmark and Norway (Operation Weserübung) during WWII.
 

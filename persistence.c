@@ -27,7 +27,7 @@ int read_db(Database* db, const char* filename) {
         }
     }
     db->size = size;
-    fread(db->keys, sizeof(unsigned long), db->size, file);
+    fread(db->keys, sizeof(uint64_t), db->size, file);
     fread(db->value_sizes, sizeof(size_t), db->size, file);
 
     for (i = 0; i < db->size; ++i) {
@@ -47,7 +47,7 @@ int write_db(Database* db, const char* filename) {
     }
 
     fwrite(&db->size, sizeof(int), 1, file);
-    fwrite(db->keys, sizeof(unsigned long), db->size, file);
+    fwrite(db->keys, sizeof(uint64_t), db->size, file);
     fwrite(db->value_sizes, sizeof(size_t), db->size, file);
 
     for (i = 0; i < db->size; ++i) {
