@@ -14,32 +14,36 @@
 
 int main() {
     size_t i;
-    
+    size_t size;
+    int status = 1;
+    const unsigned char* read_value;
+    const unsigned char* read_index_value;
     Database *db = (Database *)malloc(sizeof(Database));
+    Database* db2 = NULL;
+
     if (db == NULL || init_database(db) != U64_OK) {
-        return 1;
+        goto cleanup;
     }
     
     printf("Size before creating item 100: %d\n", getsize_db(db));
 
     unsigned char value1[] = {0x01, 0x02, 0x03, 0x04};
     if (create_record(db, 100, value1, sizeof(value1)) != U64_OK) {
-        return 1;
+        goto cleanup;
     }
     
     printf("Size after creating item 100: %d\n", getsize_db(db));
     
     unsigned char value2[] = {0x11, 0x12, 0x13, 0x14};
     if (create_record(db, 200, value2, sizeof(value2)) != U64_OK) {
-        return 1;
+        goto cleanup;
     }
     
     printf("Size after creating item 200: %d\n", getsize_db(db));
 
-    size_t size;
-    const unsigned char* read_value = read_record(db, 100, &size);
+    read_value = read_record(db, 100, &size);
     if (read_value == NULL) {
-        return 1;
+        goto cleanup;
     }
     printf("Read key 100: ");
     for (i = 0; i < size; i++) {
@@ -49,12 +53,12 @@ int main() {
 
     unsigned char value3[] = {0x21, 0x22, 0x23};
     if (update_record(db, 100, value3, sizeof(value3)) != U64_OK) {
-        return 1;
+        goto cleanup;
     }
 
     read_value = read_record(db, 100, &size);
     if (read_value == NULL) {
-        return 1;
+        goto cleanup;
     }
     printf("Read key 100 after update: ");
     for (i = 0; i < size; i++) {
@@ -63,14 +67,14 @@ int main() {
     printf("\n");
 
     if (delete_record(db, 100) != U64_OK) {
-        return 1;
+        goto cleanup;
     }
 
     printf("Size after delete: %d\n", getsize_db(db));
 
-    const unsigned char* read_index_value = read_record_by_index(db, 0, &size);
+    read_index_value = read_record_by_index(db, 0, &size);
     if (read_index_value == NULL) {
-        return 1;
+        goto cleanup;
     }
     printf("Read by index 0: ");
     for (i = 0; i < size; i++) {
@@ -79,18 +83,29 @@ int main() {
     printf("\n");
 
     if (write_db(db, "database.dat") != U64_OK) {
-        return 1;
+        goto cleanup;
     }
 
-    Database* db2 = (Database *)malloc( sizeof(Database) );
+    db2 = (Database *)malloc( sizeof(Database) );
     if (db2 == NULL || init_database(db2) != U64_OK) {
-        return 1;
+        goto cleanup;
     }
     if (read_db(db2, "database.dat") != U64_OK) {
-        return 1;
+        goto cleanup;
     }
 
     printf("Size of db2 after reading from file: %d\n", getsize_db(db2));
 
-    return 0;
+    status = 0;
+
+cleanup:
+    if (db != NULL) {
+        free_database(db);
+        free(db);
+    }
+    if (db2 != NULL) {
+        free_database(db2);
+        free(db2);
+    }
+    return status;
 }

@@ -9,6 +9,7 @@ libu64 \- A key-value database library with 64-bit keys.
 #include <stdint.h>
 
 int init_database(Database *db);
+void free_database(Database *db);
 int getlimit_db(Database *db);
 int getsize_db(Database *db);
 
@@ -76,6 +77,11 @@ characteristics:
 Initializes the database structure. This function sets the initial size of
 the database to 0 and the initial capacity to 32 records. The function
 returns \fB0\fP on success and \fB-1\fP on failure.
+
+.SS "void free_database(Database *db)"
+Frees all memory owned by the database, including every stored value and the
+backing arrays for keys, values, and value sizes. The database fields are
+reset to an empty null state.
 
 .SS "int getlimit_db(Database *db)"
 Returns the current capacity of the database. The capacity starts at 32
@@ -155,6 +161,7 @@ int main() {
     unsigned char value100[] = {0x01, 0x02, 0x03, 0x04};
     size_t size;
     size_t i;
+    int status = 1;
     const unsigned char *read_value;
 
     if (init_database(&db) != 0) {
@@ -162,7 +169,7 @@ int main() {
     }
 
     if (create_record(&db, 100, value100, sizeof(value100)) != 0) {
-        return 1;
+        goto cleanup;
     }
 
     read_value = read_record(&db, 100, &size);
@@ -175,9 +182,13 @@ int main() {
     }
 
     if (write_db(&db, "database.dat") != 0) {
-        return 1;
+        goto cleanup;
     }
-    return 0;
+    status = 0;
+
+cleanup:
+    free_database(&db);
+    return status;
 }
 .fi
 

@@ -31,6 +31,28 @@ int init_database(Database* db) {
     return U64_OK;
 }
 
+void free_database(Database* db) {
+    int i;
+
+    if (db == NULL) {
+        return;
+    }
+
+    for (i = 0; i < db->size; ++i) {
+        free(db->values[i]);
+    }
+
+    free(db->keys);
+    free(db->values);
+    free(db->value_sizes);
+
+    db->keys = NULL;
+    db->values = NULL;
+    db->value_sizes = NULL;
+    db->size = 0;
+    db->limit = 0;
+}
+
 int getlimit_db(Database* db) {
     return db->limit;
 }

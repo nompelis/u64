@@ -1,6 +1,6 @@
 # demo.c Description
 
-`demo.c` is a small smoke-test program for the `u64` library. It demonstrates the normal lifecycle of an in-memory database: initialize, create records, read a record, update it, delete it, read by sorted index, write a snapshot, and load that snapshot into a second database.
+`demo.c` is a small smoke-test program for the `u64` library. It demonstrates the normal lifecycle of an in-memory database: initialize, create records, read a record, update it, delete it, read by sorted index, write a snapshot, load that snapshot into a second database, and clean up allocated database memory.
 
 What it tests:
 
@@ -17,5 +17,7 @@ What it tests:
 - **Read by index:** Calls `read_record_by_index(db, 0)`. Because key `100` was deleted, index `0` should now refer to the remaining record, key `200`, so it prints `11 12 13 14`.
 
 - **Persistence:** Writes the current database to `database.dat`, creates a second database, loads `database.dat` into it, and prints the loaded size.
+
+- **Cleanup:** Calls `free_database` for each initialized database before freeing the heap-allocated `Database` structures.
 
 It is not a formal test suite: it does not assert every expected byte value. It verifies behavior by exercising the API, printing the observed results, and returning a nonzero status if initialization, mutation, read, write, or load operations fail.

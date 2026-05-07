@@ -25,6 +25,7 @@ typedef struct {
 #define U64_ERROR -1
 
 int init_database(Database* db);
+void free_database(Database* db);
 int getlimit_db(Database* db);
 int getsize_db(Database* db);
 int binary_search_db(Database* db, uint64_t key);

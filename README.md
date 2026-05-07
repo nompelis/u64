@@ -60,7 +60,18 @@ Function `init_database`
 
 **Returns**: `0` on success, `-1` on failure.
 
-### 4.2 Get limit
+### 4.2 Free database
+
+Function `free_database`
+
+**Description**: Frees all memory owned by the database, including every stored value and the backing arrays for keys, values, and value sizes. The database fields are reset to an empty null state.
+
+**Prototype**: `void free_database(Database* db);`
+
+**Parameters**:
+- `db`: A pointer to the `Database` structure to free.
+
+### 4.3 Get limit
 
 Function `getlimit_db`
 
@@ -73,7 +84,7 @@ Function `getlimit_db`
 
 **Returns**: The current capacity of the database.
 
-### 4.3 Get number of items in the database
+### 4.4 Get number of items in the database
 
 Function `getsize_db`
 
