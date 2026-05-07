@@ -1,4 +1,4 @@
-.TH libu64 3 "August 2024" "1.0" "libu64 library functions"
+.TH libu64 3 "August 2024" "2.0" "libu64 library functions"
 
 .SH NAME
 libu64 \- A key-value database library with 64-bit keys.
@@ -88,8 +88,9 @@ Returns the current number of records in the database.
 .SS "void create_record(Database *db, uint64_t key, const unsigned char *value, size_t value_size)"
 .br
 Creates a new record in the database with the specified key and value. If the
-key already exists, the function will print an error message. If the database
-is full, the function will also print an error message.
+key already exists, the function will print an error message. If the current
+capacity is full, the database attempts to grow before inserting. If growth
+fails, the function will print an error message.
 
 .SS "const unsigned char *read_record(Database *db, uint64_t key, size_t *value_size)"
 .br
@@ -119,14 +120,15 @@ to the size of the value. If the index is not valid, the function returns
 
 .SS "int read_db(Database *db, const char *filename)"
 .br
-Reads the database from the specified file. If the file cannot be opened, the
-function returns \fB-1\fP. On success, the function returns \fB0\fP.
+Reads the database from the specified file. If the file cannot be opened or
+the operation fails, the function returns \fB-1\fP. On success, the function
+returns \fB0\fP.
 
 .SS "int write_db(Database *db, const char *filename)"
 .br
 Writes the current state of the database to the specified file. If the file
-cannot be opened, the function returns \fB-1\fP. On success, the function
-returns \fB0\fP.
+cannot be opened or the operation fails, the function returns \fB-1\fP. On
+success, the function returns \fB0\fP.
 
 .SH PERSISTENCE FORMAT
 Version 2 of the library writes a versioned persistence format that is not
@@ -148,16 +150,19 @@ integers. Record values are stored as raw bytes.
 
 int main() {
     Database db;
+    unsigned char value100[] = {0x01, 0x02, 0x03, 0x04};
+    size_t size;
+    size_t i;
+    const unsigned char *read_value;
+
     init_database(&db);
 
-    unsigned char value100[] = {0x01, 0x02, 0x03, 0x04};
-    create(&db, 100, value1, sizeof(value1));
+    create_record(&db, 100, value100, sizeof(value100));
 
-    size_t size;
-    const unsigned char *read_value = read(&db, 100, &size);
+    read_value = read_record(&db, 100, &size);
     if (read_value) {
         printf("Read key 100: ");
-        for (size_t i = 0; i < size; i++) {
+        for (i = 0; i < size; i++) {
             printf("%02x ", read_value[i]);
         }
         printf("\n");
